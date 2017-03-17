@@ -413,7 +413,8 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     size_t CompositorWorkspace::getFrameCount(void) const
     {
-        return mDefinition->mCompositorManager->getFrameCount();
+        //return mFrameCount;
+	return mDefinition->mCompositorManager->getFrameCount();
     }
     //-----------------------------------------------------------------------------------
     void CompositorWorkspace::_beginUpdate( bool forceBeginFrame )
@@ -544,6 +545,11 @@ namespace Ogre
     void CompositorWorkspace::_validateFinalTarget(void)
     {
         mRenderSys->_setRenderTarget( mRenderWindow.target );
+    }
+    //-----------------------------------------------------------------------------------
+    void CompositorWorkspace::_incrementFrameCount(void)
+    {
+        ++mFrameCount;
     }
     //-----------------------------------------------------------------------------------
     CompositorShadowNode* CompositorWorkspace::findShadowNode( IdString nodeDefName ) const

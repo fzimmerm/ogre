@@ -252,11 +252,6 @@ namespace Ogre {
         mRibbonTrailFactory = OGRE_NEW RibbonTrailFactory();
         addMovableObjectFactory(mRibbonTrailFactory);
 
-        // Load plugins
-        if (!pluginFileName.empty()) {
-            loadPlugins(pluginFileName);
-        }
-
 #if OGRE_NO_DDS_CODEC == 0
         // Register image codecs
         DDSCodec::startup();
@@ -274,6 +269,11 @@ namespace Ogre {
 #if OGRE_NO_STBI_CODEC == 0
         STBIImageCodec::startup();
 #endif
+
+        // Load plugins
+        if (!pluginFileName.empty()) {
+            loadPlugins(pluginFileName);
+        }
 
         LogManager::getSingleton().logMessage("*-*-* OGRE Initialising");
         msg = "*-*-* Version " + mVersion;

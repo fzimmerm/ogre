@@ -583,6 +583,11 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
+    void CompositorManager2::_addQueuedWorkspaces(void)
+    {
+        addQueuedWorkspaces();
+    }
+    //-----------------------------------------------------------------------------------
     void CompositorManager2::createBasicWorkspaceDef( const IdString &workspaceDefName,
                                                         const ColourValue &backgroundColour,
                                                         IdString shadowNodeName )

@@ -85,6 +85,8 @@ namespace Ogre
 
         CompositorWorkspaceListener *mListener;
 
+        size_t                  mFrameCount;
+
         /// Main sequence in the order they should be executed
         CompositorNodeVec       mNodeSequence;
         CompositorShadowNodeVec mShadowNodes;
@@ -202,6 +204,11 @@ namespace Ogre
             on the RenderWindow, so that BeginScene doesn't fail.
         */
         void _validateFinalTarget(void);
+
+        /** Used in CompositorShadowNode::buildClosestLightList.
+            Needs to be incremented for each manual workspace update
+        */
+        void _incrementFrameCount(void);
 
         /** Finds a shadow node instance with a given name.
             Note that unlike nodes, there can only be one ShadowNode instance per definition

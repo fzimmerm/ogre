@@ -268,6 +268,7 @@ namespace Ogre
 
         void _update(void);
         void _swapAllFinalTargets(void);
+        void _addQueuedWorkspaces(void);
 
         /** Utility helper to create a basic workspace to get you out of the rush. Advanced users will
             probably prefer to create the workspace definition using scripts or manipulating functions
