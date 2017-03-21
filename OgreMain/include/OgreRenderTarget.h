@@ -40,6 +40,8 @@ THE SOFTWARE.
     #define OGRE_REND_TO_TEX_RT_GROUP 2
 #endif
 
+class WbFrametimeLogger;
+
 namespace Ogre {
 
     /** \addtogroup Core
@@ -390,6 +392,8 @@ namespace Ogre {
         typedef vector<RenderTargetListener*>::type RenderTargetListenerList;
         RenderTargetListenerList mListeners;
     
+        WbFrametimeLogger *mCulltimeLogger;
+        WbFrametimeLogger *mRendertimeLogger;
 
         /// internal method for firing events
         virtual void firePreUpdate(void);

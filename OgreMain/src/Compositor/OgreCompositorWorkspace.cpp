@@ -413,7 +413,7 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     size_t CompositorWorkspace::getFrameCount(void) const
     {
-        return mFrameCount;
+        return mDefinition->mCompositorManager->getFrameCount() + mFrameCount;
     }
     //-----------------------------------------------------------------------------------
     void CompositorWorkspace::_beginUpdate( bool forceBeginFrame )

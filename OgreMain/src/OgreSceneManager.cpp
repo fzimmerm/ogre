@@ -75,6 +75,9 @@ THE SOFTWARE.
 
 #include <cstdio>
 
+#include <iostream>
+#include "WbFrametimeLogger.hpp"
+
 namespace Ogre {
 
 //-----------------------------------------------------------------------
@@ -220,6 +223,18 @@ mGpuParamsDirty((uint16)GPV_ALL)
         mSceneRoot[i]->setName( "Ogre/SceneRoot" + StringConverter::toString( i ) );
         mSceneRoot[i]->_getDerivedPositionUpdated();
     }
+ 
+     mRendertimeLogger                              = new WbFrametimeLogger(100, 0,     "SceneManager::_renderVisibleObjects",                   "rendertimes.log");
+     mRQ0timeLogger                                 = new WbFrametimeLogger(100, 0,     "SceneManager::renderVisibleObjectsDefaultSequence_RQ0", "rendertimes.log");
+     mRQ1timeLogger                                 = new WbFrametimeLogger(100, 0,     "SceneManager::renderVisibleObjectsDefaultSequence_RQ1", "rendertimes.log");
+     mRQ2timeLogger                                 = new WbFrametimeLogger(100, 0,     "SceneManager::renderVisibleObjectsDefaultSequence_RQ2", "rendertimes.log");
+     mRQ3timeLogger                                 = new WbFrametimeLogger(100, 0,     "SceneManager::renderVisibleObjectsDefaultSequence_RQ3", "rendertimes.log");
+     mRenderSingleObjectLogger                      = new WbFrametimeLogger(100, 10000, "SceneManager::renderSingleObject",                      "rendertimes.log");
+     mRenderSingleObjectStateNonSuppressedLogger    = new WbFrametimeLogger(100, 10000, "SceneManager::renderSingleObjectStateNonSuppressed",    "rendertimes.log");
+     mRenderSingleObjectLightApplyLogger            = new WbFrametimeLogger(100, 10000, "SceneManager::renderSingleObjectLightApply",            "rendertimes.log");
+     mRenderSingleObjectLightRenderLogger           = new WbFrametimeLogger(100, 10000, "SceneManager::renderSingleObjectLightRender",           "rendertimes.log");
+     mRenderSingleObjectLightGpuParamLogger         = new WbFrametimeLogger(100, 20000, "SceneManager::renderSingleObjectLightGpuParam",         "rendertimes.log");
+     mRenderSingleObjectLightRenderOpLogger         = new WbFrametimeLogger(100, 10000, "SceneManager::renderSingleObjectLightRenderOp",         "rendertimes.log");
 }
 //-----------------------------------------------------------------------
 SceneManager::~SceneManager()
@@ -2565,6 +2580,7 @@ void SceneManager::updateSceneGraph()
 //-----------------------------------------------------------------------
 void SceneManager::_renderVisibleObjects(void)
 {
+    mRendertimeLogger->startFrame();
     RenderQueueInvocationSequence* invocationSequence = 
         mCurrentViewport->_getRenderQueueInvocationSequence();
     // Use custom sequence only if we're not doing the texture shadow render
@@ -2578,6 +2594,7 @@ void SceneManager::_renderVisibleObjects(void)
     {
         renderVisibleObjectsDefaultSequence();
     }
+    mRendertimeLogger->endFrame();
 }
 //-----------------------------------------------------------------------
 void SceneManager::renderVisibleObjectsCustomSequence(RenderQueueInvocationSequence* seq)
@@ -2637,8 +2654,35 @@ void SceneManager::renderVisibleObjectsDefaultSequence(void)
     // NB only queues which have been created are rendered, no time is wasted
     //   parsing through non-existent queues (even though there are 10 available)
 
+    size_t queueNumber = 0;
     while (queueIt.hasMoreElements())
     {
+        switch(queueNumber) {
+            case 0:
+            mRQ0timeLogger->startFrame();
+            break;
+
+            case 1:
+            mRenderSingleObjectLogger->startFrame();
+            mRenderSingleObjectStateNonSuppressedLogger->startFrame();
+            mRenderSingleObjectLightApplyLogger->startFrame();
+            mRenderSingleObjectLightRenderLogger->startFrame();
+            mRenderSingleObjectLightGpuParamLogger->startFrame();
+            mRenderSingleObjectLightRenderOpLogger->startFrame();
+            mRQ1timeLogger->startFrame();
+            break;
+            
+            case 2:
+            mRQ2timeLogger->startFrame();
+            break;
+            
+            case 3:
+            mRQ3timeLogger->startFrame();
+            break;
+            
+            default: break;
+        }
+
         // Get queue group id
         uint8 qId = queueIt.peekNextKey();
         RenderQueueGroup* pGroup = queueIt.getNext();
@@ -2677,6 +2721,33 @@ void SceneManager::renderVisibleObjectsDefaultSequence(void)
             }
         } while (repeatQueue);
 
+        switch(queueNumber) {
+            case 0:
+            mRQ0timeLogger->endFrame();
+            break;
+
+            case 1:
+            mRQ1timeLogger->endFrame();
+            mRenderSingleObjectLogger->endFrame();
+            mRenderSingleObjectStateNonSuppressedLogger->endFrame();
+            mRenderSingleObjectLightApplyLogger->endFrame();
+            mRenderSingleObjectLightRenderLogger->endFrame();
+            mRenderSingleObjectLightGpuParamLogger->endFrame();
+            mRenderSingleObjectLightRenderOpLogger->endFrame();
+            break;
+            
+            case 2:
+            mRQ2timeLogger->endFrame();
+            break;
+            
+            case 3:
+            mRQ3timeLogger->endFrame();
+            break;
+            
+            default: break;
+        }
+
+        ++queueNumber;
     } // for each queue group
 
     firePostRenderQueues();
@@ -2867,6 +2938,8 @@ void SceneManager::renderTransparentShadowCasterObjects(
 void SceneManager::renderSingleObject(Renderable* rend, const Pass* pass, 
                                       bool lightScissoringClipping, bool doLightIteration )
 {
+    mRenderSingleObjectLogger->startPartial();
+
     unsigned short numMatrices;
     RenderOperation ro;
 
@@ -2911,6 +2984,8 @@ void SceneManager::renderSingleObject(Renderable* rend, const Pass* pass,
 
     if (!mSuppressRenderStateChanges)
     {
+        mRenderSingleObjectStateNonSuppressedLogger->startPartial();
+
         bool passSurfaceAndLightParams = true;
 
         if (pass->isProgrammable())
@@ -3023,6 +3098,8 @@ void SceneManager::renderSingleObject(Renderable* rend, const Pass* pass,
 
             while (lightsLeft > 0)
             {
+                mRenderSingleObjectLightApplyLogger->startPartial();
+
                 // Determine light list to use
                 if (iteratePerLight)
                 {
@@ -3106,7 +3183,12 @@ void SceneManager::renderSingleObject(Renderable* rend, const Pass* pass,
                     lightsLeft = 0;
                 }
 
+                mRenderSingleObjectLightApplyLogger->endPartial();
+                mRenderSingleObjectLightRenderLogger->startPartial();
+
                 fireRenderSingleObject(rend, pass, mAutoParamDataSource, pLightListToUse, mSuppressRenderStateChanges);
+
+                mRenderSingleObjectLightGpuParamLogger->startPartial();
 
                 // Do we need to update GPU program parameters?
                 if (pass->isProgrammable())
@@ -3120,6 +3202,9 @@ void SceneManager::renderSingleObject(Renderable* rend, const Pass* pass,
 
                     useLightsGpuProgram(pass, pLightListToUse);
                 }
+
+                mRenderSingleObjectLightGpuParamLogger->endPartial();
+
                 // Do we need to update light states? 
                 // Only do this if fixed-function vertex lighting applies
                 if (pass->getLightingEnabled() && passSurfaceAndLightParams)
@@ -3146,6 +3231,9 @@ void SceneManager::renderSingleObject(Renderable* rend, const Pass* pass,
                     if (scissored == CLIPPED_ALL || clipped == CLIPPED_ALL)
                         continue;
                 }
+
+                mRenderSingleObjectLightRenderOpLogger->startPartial();
+
                 // issue the render op      
                 // nfz: check for gpu_multipass
                 mDestRenderSystem->setCurrentPassIterationCount(pass->getPassIterationCount());
@@ -3177,8 +3265,14 @@ void SceneManager::renderSingleObject(Renderable* rend, const Pass* pass,
                 }
                 depthInc += pass->getPassIterationCount();
 
+                mRenderSingleObjectLightRenderOpLogger->endPartial();
+                mRenderSingleObjectLightGpuParamLogger->startPartial();
+
                 // Finalise GPU parameter bindings
                 updateGpuProgramParameters(pass);
+
+                mRenderSingleObjectLightGpuParamLogger->endPartial();
+                mRenderSingleObjectLightRenderOpLogger->startPartial();
 
                 rend->getRenderOperation(ro);
 
@@ -3190,6 +3284,10 @@ void SceneManager::renderSingleObject(Renderable* rend, const Pass* pass,
                     resetScissor();
                 if (clipped == CLIPPED_SOME)
                     resetLightClip();
+
+                mRenderSingleObjectLightRenderOpLogger->endPartial();
+                mRenderSingleObjectLightRenderLogger->endPartial();
+
             } // possibly iterate per light
         }
         else // no automatic light processing
@@ -3264,6 +3362,7 @@ void SceneManager::renderSingleObject(Renderable* rend, const Pass* pass,
             } // !skipBecauseOfLightType
         }
 
+        mRenderSingleObjectStateNonSuppressedLogger->endPartial();
     }
     else // mSuppressRenderStateChanges
     {
@@ -3292,6 +3391,8 @@ void SceneManager::renderSingleObject(Renderable* rend, const Pass* pass,
     // Reset view / projection changes if any
     resetViewProjMode(passTransformState);
     OgreProfileEndGPUEvent("Material: " + pass->getParent()->getParent()->getName());
+
+    mRenderSingleObjectLogger->endPartial();
 }
 //-----------------------------------------------------------------------
 void SceneManager::setAmbientLight(const ColourValue& colour)
