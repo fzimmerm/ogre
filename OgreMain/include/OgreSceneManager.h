@@ -619,17 +619,17 @@ namespace Ogre {
         bool mFlipCullingOnNegativeScale;
         CullingMode mPassCullingMode;
 
-        WbFrametimeLogger *mRendertimeLogger;
-        WbFrametimeLogger *mRQ0timeLogger;
-        WbFrametimeLogger *mRQ1timeLogger;
-        WbFrametimeLogger *mRQ2timeLogger;
-        WbFrametimeLogger *mRQ3timeLogger;
-        WbFrametimeLogger *mRenderSingleObjectLogger;
-        WbFrametimeLogger *mRenderSingleObjectStateNonSuppressedLogger;
-        WbFrametimeLogger *mRenderSingleObjectLightGpuParamLogger;
-        WbFrametimeLogger *mRenderSingleObjectLightApplyLogger;
-        WbFrametimeLogger *mRenderSingleObjectLightRenderLogger;
-        WbFrametimeLogger *mRenderSingleObjectLightRenderOpLogger;
+        // WbFrametimeLogger *mRendertimeLogger;
+        // WbFrametimeLogger *mRQ0timeLogger;
+        // WbFrametimeLogger *mRQ1timeLogger;
+        // WbFrametimeLogger *mRQ2timeLogger;
+        // WbFrametimeLogger *mRQ3timeLogger;
+        // WbFrametimeLogger *mRenderSingleObjectLogger;
+        // WbFrametimeLogger *mRenderSingleObjectStateNonSuppressedLogger;
+        // WbFrametimeLogger *mRenderSingleObjectLightGpuParamLogger;
+        // WbFrametimeLogger *mRenderSingleObjectLightApplyLogger;
+        // WbFrametimeLogger *mRenderSingleObjectLightRenderLogger;
+        // WbFrametimeLogger *mRenderSingleObjectLightRenderOpLogger;
 
     protected:
         /// Array defining shadow texture index in light list.

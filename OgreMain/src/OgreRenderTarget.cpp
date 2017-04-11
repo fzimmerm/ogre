@@ -58,8 +58,8 @@ namespace Ogre {
 #endif
     {
         resetStatistics();
-        mCulltimeLogger = new WbFrametimeLogger(100, 0, "RenderTarget::_updateViewportCullPhase01", "rendertimes.log");
-        mRendertimeLogger = new WbFrametimeLogger(100, 0, "RenderTarget::_updateViewportRenderPhase02", "rendertimes.log");
+        // mCulltimeLogger = new WbFrametimeLogger(100, 0, "RenderTarget::_updateViewportCullPhase01", "rendertimes.log");
+        // mRendertimeLogger = new WbFrametimeLogger(100, 0, "RenderTarget::_updateViewportRenderPhase02", "rendertimes.log");
     }
 
     RenderTarget::~RenderTarget()
@@ -178,10 +178,10 @@ namespace Ogre {
                 "RenderTarget::_updateViewportCullPhase the requested viewport is "
                 "not bound to the rendertarget!" );
 
-        mCulltimeLogger->startFrame();
+        // mCulltimeLogger->startFrame();
         fireViewportPreUpdate(viewport);
         viewport->_updateCullPhase01( camera, lodCamera, firstRq, lastRq );
-        mCulltimeLogger->endFrame();
+        // mCulltimeLogger->endFrame();
     }
     //-----------------------------------------------------------------------
     void RenderTarget::_updateViewportRenderPhase02( Viewport* viewport, Camera *camera,
@@ -192,7 +192,7 @@ namespace Ogre {
                 "RenderTarget::_updateViewport the requested viewport is "
                 "not bound to the rendertarget!" );
 
-        mRendertimeLogger->startFrame();
+        // mRendertimeLogger->startFrame();
         viewport->_updateRenderPhase02( camera, lodCamera, firstRq, lastRq );
         if(updateStatistics)
         {
@@ -200,7 +200,7 @@ namespace Ogre {
             mStats.batchCount += camera->_getNumRenderedBatches();
         }
         fireViewportPostUpdate(viewport);
-        mRendertimeLogger->endFrame();
+        // mRendertimeLogger->endFrame();
     }
     //-----------------------------------------------------------------------
     Viewport* RenderTarget::addViewport( float left, float top, float width, float height )

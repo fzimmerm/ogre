@@ -4,38 +4,51 @@
 #include <string>
 #include <vector>
 
-struct WbFrameTime {
-	WbFrameTime(clock_t start) 
-	: start(start), end(start) {}
+struct WbFrametimeSample {
+	WbFrametimeSample(clock_t start) 
+	: mStart(start), mEnd(start) {}
 
-	clock_t start;
-	clock_t end;
+	clock_t mStart;
+	clock_t mEnd;
+};
+
+struct WbFrametimeMeasurement {
+	WbFrametimeMeasurement(double mean, double variance)
+	: mMean(mean), mVariance(variance) {}
+
+	double mMean;
+	double mVariance;
 };
 
 class WbFrametimeLogger {
 	public:
-		WbFrametimeLogger(size_t framesToLog, size_t maxPartials, std::string name, std::string outputPath);
+		WbFrametimeLogger(size_t samplesPerMeasurement, size_t totalMeasurements, std::string name, std::string filename, size_t maxPartialSamples = 0);
 
-		void startFrame();
-		void startPartial();
-		void endPartial();
-		void endFrame();
+		void startSample();
+		void startPartialSample();
+		void endPartialSample();
+		void endSample();
 
 		void writeToFile();
 
 	private:
-		size_t framesToLog;
-		size_t framesLogged;
-		size_t maxPartials;
-		size_t partialsLogged;
+		size_t mSamplesPerMeasurement;
+		size_t mTotalMeasurements;
+		size_t mSamplesTaken;
+		size_t mMeasurementsTaken;
+		size_t mMaxPartialSamples;
+		size_t mPartialSamplesTaken;
 
-		bool frameStarted;
+		bool mSamplingStarted;
+		double mClocksPerMilliSecond;
 
-		std::vector<WbFrameTime> frametimes;
-		std::vector<WbFrameTime> partialtimes;
+		std::vector<WbFrametimeSample> 			mSamples;
+		std::vector<WbFrametimeSample> 			mPartialSamples;
+		std::vector<double> 								mSampleTimes;
+		std::vector<WbFrametimeMeasurement> mMeasurements;
 
-		std::string name;
-		std::string outputPath;
+		std::string mName;
+		std::string mFilename;
 };
 
 #endif

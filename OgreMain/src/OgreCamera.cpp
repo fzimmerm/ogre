@@ -36,6 +36,8 @@ THE SOFTWARE.
 #include "OgreMovablePlane.h"
 #include "OgreSceneNode.h"
 
+#include <iostream>
+
 namespace Ogre {
 
     String Camera::msMovableType = "Camera";
@@ -87,8 +89,11 @@ namespace Ogre {
     Camera::~Camera()
     {
         ListenerList listenersCopy = mListeners;
+        // std::cout << "Camera " << this << ": remaining listeners: " << mListeners.size() << std::endl;
+
         for (ListenerList::iterator i = listenersCopy.begin(); i != listenersCopy.end(); ++i)
         {
+            // std::cout << "Camera " << this << ": notifying listener " << (*i) << std::endl;
             (*i)->cameraDestroyed(this);
         }
     }
@@ -426,12 +431,14 @@ namespace Ogre {
     //---------------------------------------------------------------------
     void Camera::addListener(Listener* l)
     {
+        // std::cout << "Camera " << this << ": adding listener " << l << std::endl;
         if (std::find(mListeners.begin(), mListeners.end(), l) == mListeners.end())
             mListeners.push_back(l);
     }
     //---------------------------------------------------------------------
     void Camera::removeListener(Listener* l)
     {
+        // std::cout << "Camera " << this << ": removing listener " << l << std::endl;
         ListenerList::iterator i = std::find(mListeners.begin(), mListeners.end(), l);
         if (i != mListeners.end())
             mListeners.erase(i);

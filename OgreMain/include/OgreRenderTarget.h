@@ -392,8 +392,8 @@ namespace Ogre {
         typedef vector<RenderTargetListener*>::type RenderTargetListenerList;
         RenderTargetListenerList mListeners;
     
-        WbFrametimeLogger *mCulltimeLogger;
-        WbFrametimeLogger *mRendertimeLogger;
+        // WbFrametimeLogger *mCulltimeLogger;
+        // WbFrametimeLogger *mRendertimeLogger;
 
         /// internal method for firing events
         virtual void firePreUpdate(void);
