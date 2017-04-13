@@ -359,18 +359,12 @@ namespace Ogre {
     }
 
     unsigned int OSXCocoaWindow::getWidth() const
-    {
-        // keep mWidth in sync with reality
-        assert(mView == nil || mWidth == _getPixelFromPoint([mView frame].size.width));
-        
+    {        
         return mWidth;
     }
 
     unsigned int OSXCocoaWindow::getHeight() const
     {
-        // keep mHeight in sync with reality
-        assert(mView == nil || mHeight == _getPixelFromPoint([mView frame].size.height));
-
         return mHeight;
     }
 
