@@ -1330,7 +1330,7 @@ extern void*     sbrk(ptrdiff_t);
 
 /* Declarations for locking */
 #if USE_LOCKS
-#ifndef WIN32
+#ifndef _WIN32
 #include <pthread.h>
 #if defined (__SVR4) && defined (__sun)  /* solaris */
 #include <thread.h>
@@ -1351,14 +1351,7 @@ LONG __cdecl _InterlockedExchange(LONG volatile *Target, LONG Value);
 #pragma intrinsic (_InterlockedExchange)
 #define interlockedcompareexchange _InterlockedCompareExchange
 #define interlockedexchange _InterlockedExchange
-#endif /* Win32 */
-// --- BEGIN OGRE MODIFICATION ---
-// MinGW compatibility
-#ifdef __MINGW32__
-#define interlockedcompareexchange InterlockedCompareExchange
-#define interlockedexchange InterlockedExchange
-#endif /* __MINGW32__ */
-// --- END OGRE MODIFICATION ---
+#endif /* _WIN32 */
 #endif /* USE_LOCKS */
 
 /* Declarations for bit scanning on win32 */
@@ -5705,5 +5698,3 @@ History:
          structure of old version,  but most details differ.)
 
 */
-
-
