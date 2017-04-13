@@ -3,9 +3,10 @@
 
 #include <string>
 #include <vector>
+#include <ctime>
 
 struct WbFrametimeSample {
-	WbFrametimeSample(clock_t start) 
+	WbFrametimeSample(clock_t start)
 	: mStart(start), mEnd(start) {}
 
 	clock_t mStart;
