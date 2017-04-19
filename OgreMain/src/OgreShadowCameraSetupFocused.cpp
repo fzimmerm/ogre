@@ -37,7 +37,6 @@ THE SOFTWARE.
 #include "OgreConvexBody.h"
 #include "OgreLogManager.h"
 
-
 namespace Ogre
 {
     FocusedShadowCameraSetup::FocusedShadowCameraSetup(void)
@@ -280,8 +279,8 @@ namespace Ogre
         }
 
         //Some padding
-        vMax += 10.0f;
-        vMin -= 10.0f;
+        vMax += 1.0f;
+        vMin -= 1.0f;
 
         texCam->setProjectionType( PT_ORTHOGRAPHIC );
         Vector3 shadowCameraPos = (vMin + vMax) * 0.5f;
